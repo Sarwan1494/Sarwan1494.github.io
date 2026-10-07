@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vacuum Robot Multibody Model in Simscape — Saravanan Arumugam</title>
+<meta name="description" content="Master's thesis: a parameterized Simscape Multibody model of a differential-drive vacuum cleaner robot, with contact and friction modelling, validated against the real robot's obstacle-climbing limit, and a Stateflow waypoint follower." />
+<link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap nav">
+    <a class="name" href="../index.html">Saravanan Arumugam <span>/</span> <b class="role">Mechatronics Engineer</b></a>
+    <ul>
+      <li><a href="../index.html#about">About</a></li>
+      <li><a href="../index.html#projects">Projects</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="theme-toggle" data-theme-toggle aria-label="Toggle color theme">☀ / ☾</button>
+  </div>
+</header>
+
+<div class="wrap breadcrumb">
+  <a href="../index.html">Portfolio</a> / <a href="../index.html#projects">Projects</a> / Vacuum Robot Model
+</div>
+
+<section class="project-hero">
+  <div class="wrap">
+    <div class="eyebrow">Master's Thesis · Multibody Simulation · Mobile Robotics</div>
+    <h1>Mathematical Model of a Vacuum Cleaner Robot in Simscape Multibody</h1>
+    <div class="tags">
+      <span>MATLAB</span>
+      <span>Simulink</span>
+      <span>Simscape Multibody</span>
+      <span>Stateflow</span>
+      <span>Contact modelling</span>
+      <span>Differential drive</span>
+      <span>Inverse kinematics</span>
+    </div>
+
+    <div class="video-frame">
+      <video src="../assets/video/vacuum-robot-obstacle-climb.webm" poster="../assets/img/vacuum-robot-obstacle-poster.jpg"
+             autoplay muted loop playsinline controls preload="metadata"
+             aria-label="Simscape Mechanics Explorer side view: the D-shaped robot model drives onto a step obstacle, the suction mouth lifts the front and the drive wheels climb over">
+      </video>
+    </div>
+    <p class="viewer-note">
+      Recorded in the Simscape Mechanics Explorer. The suction mouth hits the step first and lifts the front.
+      Then the spring-loaded drive wheels reach the edge and pull the robot up.
+    </p>
+
+    <div class="video-frame">
+      <video src="../assets/video/vacuum-robot-obstacle-drop.webm" poster="../assets/img/vacuum-robot-drop-poster.jpg"
+             muted loop playsinline controls preload="metadata"
+             aria-label="Simscape Mechanics Explorer side view: the robot model drives off the obstacle and the drive wheels drop back to the floor">
+      </video>
+    </div>
+    <p class="viewer-note">The robot model drops off the obstacle. The spring pushes the drive wheels back down to the floor.</p>
+
+    <table class="spec-table">
+      <tr><td>Thesis</td><td>Determining physical relationships and building mathematical models in robotic systems. Master's in Mechatronics Engineering, University of Applied Sciences Kaiserslautern, 2022</td></tr>
+      <tr><td>Reference robot</td><td>A commercial D-shaped differential-drive vacuum robot</td></tr>
+      <tr><td>Tools</td><td>MATLAB, Simulink, Simscape Multibody, Simscape Multibody Contact Forces Library, Stateflow</td></tr>
+      <tr><td>Model envelope</td><td>D-shaped body, 36 * 35 * 10 cm, all key dimensions set from one parameter mask</td></tr>
+      <tr><td>Drive units</td><td>Leading, trailing and telescopic suspension as switchable variants, 470 N/m spring with 5 cm free length</td></tr>
+      <tr><td>Solver</td><td>ode23t (the contact model is stiff)</td></tr>
+      <tr><td>Validation</td><td>Maximum climbable obstacle height, simulation against the real robot</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Overview</h2>
+    </div>
+    <div class="prose">
+      <p>
+        Physical tests on a vacuum robot are slow. Every change to the wheel position, spring or centre of gravity
+        means a new prototype and a new test series. My thesis built a simulation model that answers these
+        questions first, so fewer physical tests are needed.
+      </p>
+      <ul>
+        <li><strong>Theory.</strong> Kinematic and Lagrange dynamic equations of a differential-drive mobile robot.</li>
+        <li><strong>Model.</strong> A Simscape Multibody model of the robot with drive units, suspension, caster wheels, suction mouth and a wet-cleaning module.</li>
+        <li><strong>Contacts and friction.</strong> Using spatial contact force library and friction coefficient I measured on the real wheel, the contact forces between wheels, floor and obstacl are modelled .</li>
+        <li><strong>Fidelity check.</strong> The obstacle-climbing limit of the model compared with the measured limit of the real robot.</li>
+        <li><strong>Driving.</strong> Inverse kinematics of the differential drive in a Stateflow chart, which steers the model through a list of waypoints.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Differential-drive kinematics</h2>
+    </div>
+    <div class="prose">
+      <p>
+        The robot has two driven wheels with radius R on one axle, track width L apart. It cannot slide sideways,
+        and each wheel rolls without slip. The forward and angular velocity of the robot then follow from the two
+        wheel speeds φ̇<sub>r</sub> and φ̇<sub>l</sub>:
+      </p>
+      <div class="formula">
+        v = R · (φ̇_r + φ̇_l) / 2&nbsp;&nbsp;&nbsp;&nbsp;ω = R · (φ̇_r − φ̇_l) / L<br />
+        ẋ = v · cos θ&nbsp;&nbsp;&nbsp;&nbsp;ẏ = v · sin θ&nbsp;&nbsp;&nbsp;&nbsp;θ̇ = ω
+      </div>
+      <p>
+        To drive the model I need the inverse. A controller asks for v and ω, and each wheel gets its own speed:
+      </p>
+      <div class="formula">
+        φ̇_r = (v + ω · L / 2) / R&nbsp;&nbsp;&nbsp;&nbsp;φ̇_l = (v − ω · L / 2) / R
+      </div>
+      <p>
+        The thesis also derives the Lagrange dynamic model, M(q)·q̈ + V(q, q̇)·q̇ = B·τ. In the simulation,
+        Simscape Multibody builds and solves these equations itself. The derivation was there to understand what
+        the solver does and which parameters matter.
+      </p>
+
+      <figure class="diagram">
+        <img src="../assets/img/vacuum-robot-diff-drive-simulink.png" alt="Simulink Differential Drive Kinematics subsystem with linear velocity, angular velocity and track width inputs and right and left wheel speed outputs, two slider controls for the velocities, and the inside of the subsystem built from a product, sum and gain blocks with gain 1 over the wheel radius" loading="lazy" />
+        <figcaption>The inverse kinematics in Simulink. Sliders set v and ω, and the subsystem below turns them into the right and left wheel speeds.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Contacts and friction</h2>
+    </div>
+    <div class="prose">
+      <p>
+        Whether the robot climbs a step or gets stuck is decided almost entirely by contact forces. The model uses
+        penalty-based contacts. Two bodies may overlap slightly, and a spring-damper pushes them apart.
+      </p>
+      <ul>
+        <li><strong>Wheels to floor.</strong> Sphere-to-plane contacts from the Simscape Multibody Contact Forces Library for the drive wheels, caster wheels, base plate and suction mouth. Each contact outputs normal and friction force on a bus, logged for every run.</li>
+        <li><strong>Robot to obstacle.</strong> Spatial Contact Force blocks between the obstacle and the body, wheels, casters and suction mouth. These blocks use the full part geometry, which matters for the curved suction mouth that lifts the robot.</li>
+        <li><strong>Stiffness and damping.</strong> Stiffness follows from the allowed penetration, k = m · g / d. Damping starts one to two orders of magnitude below stiffness and is tuned from there. Too high, and the solver slows down. Too low, and parts sink into each other.</li>
+        <li><strong>Friction law.</strong> The Spatial Contact Force block blends static and dynamic friction around a critical velocity. Below it, the effective coefficient is the static value. Above it, the coefficient falls towards the dynamic value.</li>
+      </ul>
+
+      <h3>Measuring the wheel friction</h3>
+      <p>
+        Friction coefficients are not standard values. They depend on the material pair, so I measured this wheel on wood. I placed a 60.8 g drive
+        wheel on a wooden board and raised one end until the wheel started to slide. At that angle θ, the static
+        friction coefficient is μ<sub>s</sub> = tan θ.
+      </p>
+      <div class="formula">
+        F_friction = F_g · sin θ&nbsp;&nbsp;&nbsp;&nbsp;F_normal = F_g · cos θ&nbsp;&nbsp;&nbsp;&nbsp;μ_s = tan θ<br />
+        15 trials:&nbsp;&nbsp;θ = 45.3° to 49.1°&nbsp;&nbsp;→&nbsp;&nbsp;μ_s = 1.01 to 1.16
+      </div>
+      <p>
+        These values go straight into the floor contacts. The kinetic coefficient is set below the static one, and
+        both are mask parameters, so other floors can be simulated by changing two numbers.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Making the model reusable</h2>
+    </div>
+    <div class="prose">
+      <ul>
+        <li><strong>One parameter mask.</strong> Body and wheel dimensions, track width, component positions, centre of gravity, floor and obstacle friction, and suspension lever length and angle. Values come from the mask or from a script, so a test series can be reset in one step.</li>
+        <li><strong>Variant subsystems.</strong> The three suspension types sit in one variant subsystem and share one Simscape bus interface, so switching does not break any wiring. The wet module switches between spinning pads and a roller from the same mask.</li>
+        <li><strong>Solver choice.</strong> I used the Simulink Solver Profiler to find the states that slowed the run. The stiff contacts made ode23t the right solver.</li>
+        <li><strong>Limits.</strong> I also started a bristle-roller model with proxy contacts placed along a helix. Its forces did not yet match the measured values, so I kept it out of the validation.</li>
+      </ul>
+
+      <figure class="diagram">
+        <img src="../assets/img/vacuum-robot-model-top.png" alt="Top level of the Simulink model: wheel speed inputs and a drive input feed the Physical Model of robot block, with a position and pose measurement block on its robot frame output. Links above the model switch robot shape, wet module, suspension type and grid, and comment in or out the bristle roller, side brush and obstacle." loading="lazy" />
+        <figcaption>Top level of the model. The links above it switch the robot shape, wet module and suspension type, and turn the bristle roller, side brush and obstacle on or off.</figcaption>
+      </figure>
+
+      <figure class="diagram">
+        <div class="pair" style="--cols: 1.033fr 1.643fr">
+          <img src="../assets/img/vacuum-robot-mask.png" alt="Block Parameters dialog of the Physical Model of robot block, with collapsible groups for shape, floor and body dimensions, wheel and caster parameters, bristle roller, wet module, side brush, suspension and friction" loading="lazy" />
+          <img src="../assets/img/vacuum-robot-mask-wheels.png" alt="Expanded Wheel Parameters and Caster Wheel groups of the mask, with wheel thickness, radius, offset, track width and caster positions set from workspace variables" loading="lazy" />
+        </div>
+        <figcaption>The parameter mask. Left, all parameter groups. Right, the wheel and caster groups opened, with values taken from workspace variables.</figcaption>
+      </figure>
+
+      <figure class="diagram">
+        <div class="pair" style="--cols: 1.180fr 1.128fr">
+          <img src="../assets/img/vacuum-robot-wet-pads.png" alt="Transparent view of the D-shaped robot model with the wet module set to two spinning pads" loading="lazy" />
+          <img src="../assets/img/vacuum-robot-wet-roller.png" alt="Transparent view of the same robot model with the wet module set to a single cleaning roller across the body" loading="lazy" />
+        </div>
+        <figcaption>The two wet-module variants, chosen from the same mask. Left, spinning pads. Right, a cleaning roller.</figcaption>
+      </figure>
+
+      <figure class="diagram">
+        <img src="../assets/img/vacuum-robot-centre-of-mass.png" alt="Robot model in the Mechanics Explorer with centre-of-mass markers on the body, drive wheels, suspension parts and caster" loading="lazy" />
+        <figcaption>Centre-of-mass markers in the Mechanics Explorer, one for each body of the model.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Fidelity check: climbing an obstacle</h2>
+    </div>
+    <div class="prose">
+      <p>
+        The real robot had already been tested on steps of increasing height. It climbs 19 mm, needs several
+        attempts above 15 mm, and gets stuck above 19 mm. I rebuilt this test in the model with a rectangular
+        obstacle, a 3 mm edge fillet as in the test standard, and the obstacle height and approach angle as
+        script parameters.
+      </p>
+      <ul>
+        <li>The suction mouth hits the edge first. Its front radius lifts the body, so the mouth height sets the upper limit of what the robot can climb.</li>
+        <li>The drive wheels then reach the edge. The suspension spring presses them down, and the friction coefficient decides whether they grip or spin.</li>
+        <li>With too little momentum the robot stops at the edge, even at maximum friction.</li>
+        <li>On the way down, the spring pushes the wheels to the floor and the body oscillates briefly. The settling time can be read from the logged data.</li>
+      </ul>
+    </div>
+
+    <table class="spec-table">
+      <tr><td><strong>Test</strong></td><td><strong>Suspension</strong></td><td><strong>Max. obstacle height</strong></td></tr>
+      <tr><td>Real robot</td><td>Leading link</td><td>19 mm</td></tr>
+      <tr><td>Simulation</td><td>Leading link</td><td>19 mm</td></tr>
+      <tr><td>Simulation</td><td>Trailing link</td><td>20.5 mm</td></tr>
+    </table>
+    <div class="prose">
+      <p>
+        With the same suspension as the real robot, the model reaches the same 19 mm limit. The trailing-link
+        variant gives the wheels more traction force and climbs 20.5 mm in the model. That is a design change the
+        model can rank before anyone builds it.
+      </p>
+      <p>
+        I also modelled a braking test. A short-circuited motor becomes a sudden zero wheel speed, and counter-braking
+        becomes a reversed speed for a set time. The model stopped in 7.8 mm and 7.19 mm on wood. The physical test
+        had measured 13 mm and 10 mm on cork. With different floors and an estimated centre of gravity, this was a
+        trend check, not a validation.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Waypoint following with Stateflow</h2>
+    </div>
+    <div class="prose">
+      <p>
+        Moving sliders for v and ω by hand is a poor way to test a model. So I added a simple posture controller
+        that drives the multibody robot through a list of waypoints.
+      </p>
+      <ul>
+        <li>A Transform Sensor between world frame and robot frame gives the current pose (x, y, θ).</li>
+        <li>A Stateflow chart holds the current goal. Its MATLAB function <code>trackGoal</code> computes the distance to the goal, √((x_g − x)² + (y_g − y)²).</li>
+        <li>The chart outputs the angular velocity ω needed to reach the goal. The forward speed v is fixed at 0.3 m/s.</li>
+        <li>Saturation blocks limit v and ω to what the real motors can deliver, and the inverse kinematics above turns them into wheel speeds.</li>
+        <li>When the robot is close enough to a waypoint, the chart moves to the next one. The waypoints come from a parameter script and are shown as coloured discs.</li>
+      </ul>
+
+      <figure class="diagram">
+        <img src="../assets/img/vacuum-robot-waypoint-logic.png" alt="Simulink subsystem with pose and waypoints inputs feeding the Waypoint Tracking Logic chart, whose v and w outputs pass through saturation blocks. Below, the Stateflow chart with a FollowWaypoints state, a proportional angle controller with a dead band, transitions to the next waypoint, a ReachedGoal state and the trackGoal MATLAB function." loading="lazy" />
+        <figcaption>The waypoint tracking subsystem (top) and its Stateflow chart (bottom). The chart steers towards the current goal, moves to the next waypoint once it is close enough, and stops at the last one.</figcaption>
+      </figure>
+    </div>
+
+    <div class="video-frame">
+      <video src="../assets/video/vacuum-robot-waypoints.webm" poster="../assets/img/vacuum-robot-waypoints-poster.jpg"
+             muted loop playsinline controls preload="metadata"
+             aria-label="Simscape Mechanics Explorer isometric view: the robot model drives from waypoint to waypoint, marked as coloured discs on the floor">
+      </video>
+    </div>
+    <p class="viewer-note">The robot model drives the waypoint course under the Stateflow controller, with full contact and friction dynamics.</p>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    © <span id="year"></span> Saravanan Arumugam. Built as a static site, no framework.
+  </div>
+</footer>
+
+<script src="../assets/js/main.js"></script>
+<script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>

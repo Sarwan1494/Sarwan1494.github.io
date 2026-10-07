@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SO-101 Robot Arm with ROS 2 and MoveIt 2 — Saravanan Arumugam</title>
+<meta name="description" content="SO-101 (LeRobot) robot arm driven from MoveIt 2 through a custom ros2_control hardware interface for Feetech ST3215 bus servos, on ROS 2 Jazzy." />
+<link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap nav">
+    <a class="name" href="../index.html">Saravanan Arumugam <span>/</span> <b class="role">Mechatronics Engineer</b></a>
+    <ul>
+      <li><a href="../index.html#about">About</a></li>
+      <li><a href="../index.html#projects">Projects</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="theme-toggle" data-theme-toggle aria-label="Toggle color theme">☀ / ☾</button>
+  </div>
+</header>
+
+<div class="wrap breadcrumb">
+  <a href="../index.html">Portfolio</a> / <a href="../index.html#projects">Projects</a> / SO-101 Robot Arm
+</div>
+
+<section class="project-hero">
+  <div class="wrap">
+    <div class="eyebrow">Robotics Software · ROS 2 · Motion Planning</div>
+    <h1>SO-101 Robot Arm with ROS 2 and MoveIt 2</h1>
+    <div class="tags">
+      <span>ROS 2 Jazzy</span>
+      <span>MoveIt 2</span>
+      <span>ros2_control</span>
+      <span>C++</span>
+      <span>CMake</span>
+      <span>URDF / xacro</span>
+      <span>RViz</span>
+      <span>Feetech ST3215</span>
+      <span>Linux</span>
+    </div>
+
+    <div class="video-frame">
+      <video src="../assets/video/so101-moveit.webm" poster="../assets/img/so101-moveit-poster.jpg"
+             autoplay muted loop playsinline controls preload="metadata"
+             aria-label="RViz screen recording: MoveIt 2 plans and executes a motion of the SO-101 arm to a goal pose set with the interactive marker">
+      </video>
+    </div>
+    <p class="viewer-note">
+      Recorded in RViz. MoveIt 2 plans a path to the goal pose set with the interactive marker, then executes it.
+    </p>
+
+    <table class="spec-table">
+      <tr><td>Robot</td><td>SO-101 (LeRobot) arm, 5 arm joints plus gripper</td></tr>
+      <tr><td>Actuators</td><td>6 Feetech ST3215 serial bus servos, 12-bit encoders (4096 ticks/rev)</td></tr>
+      <tr><td>Connection</td><td>USB serial bus adapter on the Linux host</td></tr>
+      <tr><td>Middleware</td><td>ROS 2 Jazzy, ros2_control, controller_manager at 100 Hz</td></tr>
+      <tr><td>Motion planning</td><td>MoveIt 2 (move_group), RViz MotionPlanning panel</td></tr>
+      <tr><td>Hardware interface</td><td>Custom C++ <code>SystemInterface</code> plugin, servo driver linked in-process</td></tr>
+      <tr><td>Modes</td><td>Real hardware or mock hardware, switched with one launch argument</td></tr>
+      <tr><td>Automation</td><td>C++ startup node using <code>MoveGroupInterface</code> to run named poses on launch</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Overview</h2>
+    </div>
+    <div class="prose">
+      <p>
+        The goal was simple to state: when I plan and execute a motion in
+        RViz, the physical arm should follow. The SO-101 had a URDF and a
+        servo driver, but nothing that connected MoveIt 2 to the real
+        servos. I wrote that layer as a ros2_control hardware plugin and
+        brought the arm up end to end.
+      </p>
+      <ul>
+        <li>Wrote a <code>hardware_interface::SystemInterface</code> plugin that reads and writes all six ST3215 servos directly, with no bridge node in between.</li>
+        <li>Calibrated every joint by hand: measured the zero offset and rotation direction of each servo and stored them as ros2_control parameters.</li>
+        <li>Built one launch file that starts MoveIt 2, RViz and the controllers in either real or mock mode from a single <code>mode:=</code> argument.</li>
+        <li>Added a C++ node that uses <code>MoveGroupInterface</code> to move through two named poses automatically after launch.</li>
+        <li>Confirmed the result on hardware: the physical arm moves to the pose planned in RViz.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Real-world sync</h2>
+    </div>
+    <div class="video-frame narrow">
+      <video src="../assets/video/so101-hardware.webm" poster="../assets/img/so101-hardware-poster.jpg"
+             autoplay muted loop playsinline controls preload="metadata"
+             aria-label="The physical SO-101 arm next to a laptop running RViz, moving to the same pose that MoveIt 2 plans on screen">
+      </video>
+    </div>
+    <p class="viewer-note">
+      The physical arm follows the motion planned in RViz on the laptop beside it.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Engineering problems solved</h2>
+    </div>
+    <div class="prose">
+      <ul>
+        <li><strong>Linking a static driver into a plugin.</strong> The servo driver was a static library, so the shared plugin failed to link. I built it as position-independent code and exported it as a proper CMake target for the hardware package.</li>
+        <li><strong>Launch arguments being dropped.</strong> The standard MoveIt demo launch rebuilds its own config internally, so the real/mock setting never reached the robot description. I replaced it with a launch file that builds every component from one shared MoveIt config.</li>
+        <li><strong>xacro expression parsing.</strong> A real/mock condition failed because xacro's <code>$(eval ...)</code> stops at the first closing bracket. I traced this in the xacro source and switched to the <code>${...}</code> form.</li>
+        <li><strong>Kinematic limits of a 5-joint arm.</strong> Five joints cannot reach every position and orientation, so some marker directions found no exact IK solution. I diagnosed this and enabled approximate IK for interactive goal setting.</li>
+        <li><strong>Start-state failures on power-up.</strong> An arm that sagged while unpowered could start outside its joint limits. I traced this to how the servos behave when torque is enabled, not to the code, and made re-homing near zero part of the bring-up routine.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Next steps</h2>
+    </div>
+    <div class="prose">
+      <ul>
+        <li>Start the automatic pose sequence from a controller-ready event instead of a fixed delay.</li>
+        <li>Add a startup safety check that refuses to enable torque near a joint limit.</li>
+        <li>Profile the per-cycle serial reads and writes against the 100 Hz control budget.</li>
+        <li>Exercise the gripper on hardware and tune servo speed and acceleration.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    © <span id="year"></span> Saravanan Arumugam. Built as a static site, no framework.
+  </div>
+</footer>
+
+<script src="../assets/js/main.js"></script>
+<script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Two-Wheel Balancing Robot — Saravanan Arumugam</title>
+<meta name="description" content="Wiring schematic for a two-wheel balancing robot: ESP32 control, TB6612FNG dual motor driver, BMI160 IMU, and an LM2596 buck converter running from a 7.6 V LiPo battery." />
+<link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap nav">
+    <a class="name" href="../index.html">Saravanan Arumugam <span>/</span> <b class="role">Mechatronics Engineer</b></a>
+    <ul>
+      <li><a href="../index.html#about">About</a></li>
+      <li><a href="../index.html#projects">Projects</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="theme-toggle" data-theme-toggle aria-label="Toggle color theme">☀ / ☾</button>
+  </div>
+</header>
+
+<div class="wrap breadcrumb">
+  <a href="../index.html">Portfolio</a> / <a href="../index.html#projects">Projects</a> / Two-Wheel Balancing Robot
+</div>
+
+<section class="project-hero">
+  <div class="wrap">
+    <div class="eyebrow">Electronics · Motor Control · Robotics</div>
+    <h1>Two-Wheel Balancing Robot</h1>
+    <div class="tags">
+      <span>ESP32</span>
+      <span>TB6612FNG</span>
+      <span>BMI160 IMU</span>
+      <span>I²C</span>
+      <span>PWM</span>
+      <span>LM2596</span>
+      <span>LiPo</span>
+      <span>DC motors</span>
+    </div>
+
+    <div class="video-frame narrow">
+      <video src="../assets/video/two-wheel-robot-balancing.webm"
+             autoplay muted loop playsinline controls preload="metadata"
+             aria-label="The two-wheel robot balancing upright on its wheels">
+      </video>
+    </div>
+    <p class="viewer-note">
+      The robot balancing on its two wheels.
+    </p>
+
+    <table class="spec-table">
+      <tr><td>Controller</td><td>ESP32 dev board (ESP-WROOM-32)</td></tr>
+      <tr><td>Motor driver</td><td>Toshiba TB6612FNG dual H-bridge breakout</td></tr>
+      <tr><td>Motors</td><td>2x brushed DC motors, one per wheel</td></tr>
+      <tr><td>Sensor</td><td>Bosch BMI160 6-axis IMU on I²C (SDA / SCL)</td></tr>
+      <tr><td>Battery</td><td>7.6 V, 4500 mAh LiPo</td></tr>
+      <tr><td>Power stage</td><td>LM2596 adjustable buck converter, set to 5 V for the ESP32</td></tr>
+      <tr><td>Switching</td><td>Rocker switch between battery and the rest of the circuit</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Overview</h2>
+    </div>
+    <div class="prose">
+      <p>
+        The electronics for a two-wheel self-balancing robot. An ESP32 reads
+        the tilt of the robot from a BMI160 IMU and drives two DC motors
+        through a TB6612FNG dual H-bridge, all powered from one 7.6 V LiPo
+        battery.
+      </p>
+      <ul>
+        <li>The battery feeds the TB6612FNG motor supply (VM) directly and the LM2596 buck converter, both through one rocker switch.</li>
+        <li>The LM2596 steps the battery voltage down to 5 V for the ESP32 board.</li>
+        <li>The ESP32 sets speed and direction of each motor with one PWM and two direction lines per channel (PWMA, AIN1, AIN2 and PWMB, BIN1, BIN2), plus a shared STBY line.</li>
+        <li>The BMI160 runs from the ESP32 3.3 V pin and connects over I²C.</li>
+        <li>All modules share one common ground.</li>
+      </ul>
+      <!-- Optional: control approach, firmware, photos of the build. -->
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Schematics</h2>
+    </div>
+    <div class="video-frame">
+      <a href="../assets/img/two-wheel-robot-schematic.png" target="_blank" rel="noopener">
+        <img src="../assets/img/two-wheel-robot-schematic.png"
+             alt="Wiring schematic of the two-wheel balancing robot: 7.6 V LiPo battery through a power switch to an LM2596 buck converter and a TB6612FNG motor driver, two DC motors, an ESP32 dev board, and a BMI160 IMU on I2C" />
+      </a>
+    </div>
+    <p class="viewer-note">
+      Click the schematic to open it at full size.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Next steps</h2>
+    </div>
+    <div class="prose">
+      <ul>
+        <li><strong>Driving capability.</strong> Let the robot drive forward, back and turn while it keeps its balance.</li>
+        <li><strong>WebSocket control.</strong> Send drive commands to the ESP32 over Wi-Fi through a WebSocket connection.</li>
+        <li><strong>ESP-NOW connection.</strong> Add a direct ESP-NOW link between the robot and a second ESP32 used as a remote.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    © <span id="year"></span> Saravanan Arumugam. Built as a static site, no framework.
+  </div>
+</footer>
+
+<script src="../assets/js/main.js"></script>
+<script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>

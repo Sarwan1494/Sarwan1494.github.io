@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="100 0 480 310" role="img" aria-label="Top view of the rover turning left. All six wheels point around one centre of rotation on the middle axle line. The inner corner wheels steer 46 degrees, the outer ones 22 degrees." width="480" height="310">
+          
+          <rect x="100.0" y="0.0" width="480.0" height="310.0" fill="#ffffff" /><line x1="227" y1="155" x2="323" y2="55" stroke="#8a94a3" stroke-width="1" stroke-dasharray="4 4" fill="none" />
+          <line x1="227" y1="155" x2="477" y2="55" stroke="#8a94a3" stroke-width="1" stroke-dasharray="4 4" fill="none" />
+          <line x1="227" y1="155" x2="477" y2="155" stroke="#8a94a3" stroke-width="1" stroke-dasharray="4 4" fill="none" />
+          <line x1="227" y1="155" x2="323" y2="255" stroke="#8a94a3" stroke-width="1" stroke-dasharray="4 4" fill="none" />
+          <line x1="227" y1="155" x2="477" y2="255" stroke="#8a94a3" stroke-width="1" stroke-dasharray="4 4" fill="none" />
+
+          
+          <rect x="345" y="40" width="110" height="230" rx="8" fill="#f0f2f5" stroke="#4b5563" stroke-width="1.5" />
+          <line x1="400" y1="34" x2="400" y2="14" stroke="#4b5563" stroke-width="1.5" fill="none" />
+          <polygon points="400,8 395,17 405,17" fill="#4b5563" />
+          <text x="410" y="20" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">forward</text>
+          <path d="M394 155h12M400 149v12" stroke="#4b5563" stroke-width="1.5" fill="none" />
+
+          
+          <rect x="316" y="39" width="14" height="32" rx="3" transform="rotate(-46.1 323 55)" fill="#0f9d80" />
+          <rect x="470" y="39" width="14" height="32" rx="3" transform="rotate(-21.8 477 55)" fill="#0f9d80" />
+          <rect x="316" y="139" width="14" height="32" rx="3" fill="#4b5563" />
+          <rect x="470" y="139" width="14" height="32" rx="3" fill="#4b5563" />
+          <rect x="316" y="239" width="14" height="32" rx="3" transform="rotate(46.1 323 255)" fill="#0f9d80" />
+          <rect x="470" y="239" width="14" height="32" rx="3" transform="rotate(21.8 477 255)" fill="#0f9d80" />
+
+          
+          <circle cx="227" cy="155" r="5" fill="#0f9d80" />
+          <text x="150" y="150" fill="#1a1d23" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">ICR</text>
+          <text x="120" y="168" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">turning centre</text>
+
+          
+          <text x="236" y="32" fill="#0f9d80" font-family="Consolas, Menlo, DejaVu Sans Mono, monospace" font-size="11.5">δ_in ≈ 46°</text>
+          <text x="492" y="40" fill="#0f9d80" font-family="Consolas, Menlo, DejaVu Sans Mono, monospace" font-size="11.5">δ_out ≈ 22°</text>
+          <text x="262" y="150" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">v_in</text>
+          <text x="492" y="150" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">v_out</text>
+
+          
+          <path d="M227 292H477M227 286v12M400 286v12M477 286v12" stroke="#4b5563" stroke-width="1.5" fill="none" />
+          <text x="306" y="286" fill="#1a1d23" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">R</text>
+          <text x="433" y="286" fill="#1a1d23" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">T</text>
+          <path d="M545 55V155M539 55h12M539 155h12" stroke="#4b5563" stroke-width="1.5" fill="none" />
+          <text x="554" y="110" fill="#1a1d23" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">L</text>
+        </svg>

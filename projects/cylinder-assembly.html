@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cylinder Assembly — Saravanan Arumugam</title>
+<meta name="description" content="Flange-mounted cylinder assembly modelled in Onshape, with an animated piston and rod stroke." />
+<link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap nav">
+    <a class="name" href="../index.html">Saravanan Arumugam <span>/</span> <b class="role">Mechatronics Engineer</b></a>
+    <ul>
+      <li><a href="../index.html#about">About</a></li>
+      <li><a href="../index.html#projects">Projects</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="theme-toggle" data-theme-toggle aria-label="Toggle color theme">☀ / ☾</button>
+  </div>
+</header>
+
+<div class="wrap breadcrumb">
+  <a href="../index.html">Portfolio</a> / <a href="../index.html#projects">Projects</a> / Cylinder Assembly
+</div>
+
+<section class="project-hero">
+  <div class="wrap">
+    <div class="eyebrow">Mechanical Design · CAD</div>
+    <h1>Cylinder Assembly</h1>
+    <div class="tags">
+      <span>Onshape</span>
+      <span>3D CAD</span>
+      <span>Assembly</span>
+      <span>Mates</span>
+    </div>
+
+    <div class="video-frame">
+      <video src="../assets/video/cylinder-stroke.webm" poster="../assets/img/cylinder-poster.jpg"
+             autoplay muted loop playsinline controls preload="metadata"
+             aria-label="Animation of the cylinder assembly: the piston and rod travel through a transparent barrel between the two end caps">
+      </video>
+    </div>
+    <p class="viewer-note">
+      The barrel is shown transparent so the piston and its seals are visible through the full stroke.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Overview</h2>
+    </div>
+    <div class="prose">
+      <p>
+        A cylinder assembly modelled in Onshape. I built the parts,
+        combined them into an assembly with mates, and animated the
+        piston and rod through the full stroke.
+      </p>
+      <ul>
+        <li>Piston with multiple seal grooves, running in a cylindrical barrel.</li>
+        <li>Piston rod exiting through a rod-end cap on the mounting side.</li>
+        <li>Square mounting flange with four through holes.</li>
+        <li>Two ports on the barrel, one near each end cap.</li>
+      </ul>
+      <!-- Optional: purpose, bore / stroke / rod size, pneumatic or hydraulic. -->
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Next steps</h2>
+    </div>
+    <div class="prose">
+      <ul>
+        <li><strong>Parameterized stroke length.</strong> Drive the model from a stroke length parameter, so one model covers different strokes.</li>
+        <li><strong>Mounting variants.</strong> Design additional variants with trunnion and rear end flange mounting.</li>
+        <li><strong>Tie rod construction.</strong> Add a tie rod version, with the end caps held together by tie rods along the barrel.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    © <span id="year"></span> Saravanan Arumugam. Built as a static site, no framework.
+  </div>
+</footer>
+
+<script src="../assets/js/main.js"></script>
+<script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>

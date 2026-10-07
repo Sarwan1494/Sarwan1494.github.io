@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mars Rover: Ackermann Control, Arduino to ROS 2 — Saravanan Arumugam</title>
+<meta name="description" content="Six-wheel rocker-bogie rover with 10 Dynamixel servos. Ackermann steering and RC control on an OpenCR board, then a ROS 2 controller with micro-ROS, odometry and SLAM." />
+<link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap nav">
+    <a class="name" href="../index.html">Saravanan Arumugam <span>/</span> <b class="role">Mechatronics Engineer</b></a>
+    <ul>
+      <li><a href="../index.html#about">About</a></li>
+      <li><a href="../index.html#projects">Projects</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="theme-toggle" data-theme-toggle aria-label="Toggle color theme">☀ / ☾</button>
+  </div>
+</header>
+
+<div class="wrap breadcrumb">
+  <a href="../index.html">Portfolio</a> / <a href="../index.html#projects">Projects</a> / Mars Rover
+</div>
+
+<section class="project-hero">
+  <div class="wrap">
+    <div class="eyebrow">Mobile Robotics · Ackermann Kinematics · ROS 2</div>
+    <h1>Mars Rover: Ackermann Control, from Arduino to ROS 2</h1>
+    <div class="tags">
+      <span>Arduino C++</span>
+      <span>Python</span>
+      <span>ROS 2 Foxy</span>
+      <span>micro-ROS</span>
+      <span>SLAM Toolbox</span>
+    </div>
+
+    <div class="video-frame">
+      <video src="../assets/video/mars-rover-rviz.webm" poster="../assets/img/mars-rover-rviz-poster.jpg"
+             autoplay muted loop playsinline controls preload="metadata"
+             aria-label="RViz screen recording: the six-wheel rover model drives and steers in the odom frame under teleop commands">
+      </video>
+    </div>
+    <p class="viewer-note">
+      Recorded in RViz. Teleop commands go through the Ackermann controller node. The odometry node moves the model
+      in the <code>odom</code> frame, and the steering joints follow the controller output.
+    </p>
+
+    <table class="spec-table">
+      <tr><td>Controller board</td><td>OpenCR 1.0</td></tr>
+      <tr><td>Servos</td><td>10 × Dynamixel XL430 (4 in position mode, 6 in velocity mode)</td></tr>
+      <tr><td>Onboard computer</td><td>Jetson AGX Xavier</td></tr>
+      <tr><td>Depth camera</td><td>Intel RealSense D435</td></tr>
+      <tr><td>Tracking camera</td><td>Intel RealSense T265</td></tr>
+      <tr><td>Battery</td><td>5800 mAh LiPo</td></tr>
+      <tr><td>Remote control</td><td>Taranis X9 Lite</td></tr>
+      <tr><td>Languages</td><td>C++, Python</td></tr>
+      <tr><td>Libraries</td><td>Dynamixel2Arduino</td></tr>
+      <tr><td>Mapping</td><td>SLAM Toolbox, RTAB-Map</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Overview</h2>
+    </div>
+    <div class="prose">
+      <p>
+        I took over a 3D-printed, six-wheel rover modelled on NASA's Mars rovers. An earlier student group had
+        designed it. Over two university R&amp;D modules in 2021, I assembled it, made it drive and wrote
+        its control system twice.
+      </p>
+      <ul>
+        <li><strong>Phase 1, Arduino.</strong> Ackermann steering and an electronic differential on the OpenCR board, driven by a hobby RC transmitter.</li>
+        <li><strong>Phase 2, ROS 2.</strong> The same kinematics as a ROS 2 node on a Jetson AGX Xavier. micro-ROS links it to the servos. Wheel odometry, a URDF model, keyboard and gamepad teleop, and 2D mapping with a depth camera complete the stack.</li>
+      </ul>
+    </div>
+
+    <div class="gallery">
+      <img src="../assets/img/mars-rover-assembled-left.png" alt="The assembled six-wheel rover with a red and black 3D-printed body and rocker-bogie suspension, next to the blue Taranis X9 Lite RC transmitter" loading="lazy" />
+      <img src="../assets/img/mars-rover-assembled-right.png" alt="Side view of the assembled rover showing the rocker-bogie arms, the Dynamixel steering servos on the corner wheels and the 3D-printed wheels" loading="lazy" />
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Phase 1: Ackermann steering, worked simply</h2>
+    </div>
+    <div class="prose">
+      <p>
+        Ackermann steering solves the difference of angles between
+        steering wheels during vehicle turning. This difference is caused by the fact that each wheel
+        follows a different radius, so that the inside wheel has to be tilted a little more than the outside
+        wheel. This principle radically reduces tire slippage (that is important especially at higher
+        speeds). The Ackerman concept is to have all wheels rolling around a common point called
+        Instantaneous center (ICC) during a turn. This can greatly improve cornering ability and
+        performance. The correct angles are dependent on the wheelbase of the vehicle and the angle
+        of turn.
+      </p>
+
+      <figure class="diagram">
+        <svg viewBox="100 0 480 310" role="img" aria-label="Top view of the rover turning left. All six wheels point around one centre of rotation on the middle axle line. The inner corner wheels steer 46 degrees, the outer ones 22 degrees.">
+          <!-- rays from ICR to every wheel -->
+          <line class="dash" x1="227" y1="155" x2="323" y2="55" />
+          <line class="dash" x1="227" y1="155" x2="477" y2="55" />
+          <line class="dash" x1="227" y1="155" x2="477" y2="155" />
+          <line class="dash" x1="227" y1="155" x2="323" y2="255" />
+          <line class="dash" x1="227" y1="155" x2="477" y2="255" />
+
+          <!-- chassis -->
+          <rect class="body" x="345" y="40" width="110" height="230" rx="8" />
+          <line class="ln" x1="400" y1="34" x2="400" y2="14" />
+          <polygon class="arrowhead" points="400,8 395,17 405,17" />
+          <text class="dim" x="410" y="20">forward</text>
+          <path class="ln" d="M394 155h12M400 149v12" />
+
+          <!-- wheels: steered (accent) and fixed middle -->
+          <rect class="wheel steer" x="316" y="39" width="14" height="32" rx="3" transform="rotate(-46.1 323 55)" />
+          <rect class="wheel steer" x="470" y="39" width="14" height="32" rx="3" transform="rotate(-21.8 477 55)" />
+          <rect class="wheel" x="316" y="139" width="14" height="32" rx="3" />
+          <rect class="wheel" x="470" y="139" width="14" height="32" rx="3" />
+          <rect class="wheel steer" x="316" y="239" width="14" height="32" rx="3" transform="rotate(46.1 323 255)" />
+          <rect class="wheel steer" x="470" y="239" width="14" height="32" rx="3" transform="rotate(21.8 477 255)" />
+
+          <!-- ICR -->
+          <circle class="dot" cx="227" cy="155" r="5" />
+          <text x="150" y="150">ICR</text>
+          <text class="dim" x="120" y="168">turning centre</text>
+
+          <!-- angle labels -->
+          <text class="mono" x="236" y="32">δ_in ≈ 46°</text>
+          <text class="mono" x="492" y="40">δ_out ≈ 22°</text>
+          <text class="dim" x="262" y="150">v_in</text>
+          <text class="dim" x="492" y="150">v_out</text>
+
+          <!-- dimensions: R and T along the bottom, L at the right -->
+          <path class="ln" d="M227 292H477M227 286v12M400 286v12M477 286v12" />
+          <text x="306" y="286">R</text>
+          <text x="433" y="286">T</text>
+          <path class="ln" d="M545 55V155M539 55h12M539 155h12" />
+          <text x="554" y="110">L</text>
+        </svg>
+        <figcaption>
+          Left turn with a 30° virtual steering angle, drawn to scale. R is measured from the ICR to the rover centre.
+          T is half the track (0.154 m) and L is the front-to-middle axle distance (0.2 m).
+        </figcaption>
+      </figure>
+
+      <p>The whole controller comes down to three lines. The driver's remote controller gives a virtual steering angle δ for an imaginary wheel in the middle of the front axle:</p>
+      <div class="formula">
+        R = L / tan(δ)<br />
+        δ_in = atan( L / (R − T) )&nbsp;&nbsp;&nbsp;&nbsp;δ_out = atan( L / (R + T) )<br />
+        ω = v / R&nbsp;&nbsp;&nbsp;&nbsp;v_in = ω · (R − T)&nbsp;&nbsp;&nbsp;&nbsp;v_out = ω · (R + T)
+      </div>
+      <p>
+        The first line places the ICR. The second gives each steered wheel the angle that points it around the
+        ICR, so the inner wheel always steers more. The third is a software differential. The whole rover
+        turns at one angular velocity ω, so wheels on the outside of the curve must roll faster than wheels on the inside.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Phase 1: Dynamixel and Arduino control</h2>
+    </div>
+    <div class="prose">
+      <figure class="diagram">
+        <svg viewBox="0 0 680 200" role="img" aria-label="Signal flow: Taranis transmitter to R-XSR receiver, one PPM wire to the OpenCR board, then a TTL bus to 4 steering servos in position mode and 6 drive servos in velocity mode.">
+          <defs>
+            <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path class="arrowhead" d="M0 0L10 5L0 10z" />
+            </marker>
+          </defs>
+          <rect class="box" x="8" y="70" width="128" height="60" rx="8" />
+          <text x="20" y="96">Taranis X9 Lite</text>
+          <text class="dim" x="20" y="114">RC transmitter</text>
+
+          <rect class="box" x="176" y="70" width="118" height="60" rx="8" />
+          <text x="188" y="96">R-XSR receiver</text>
+          <text class="dim" x="188" y="114">CPPM output</text>
+
+          <rect class="box hl" x="336" y="40" width="168" height="120" rx="8" />
+          <text x="348" y="64">OpenCR 1.0</text>
+          <text class="dim" x="348" y="86">PPM interrupt reader</text>
+          <text class="dim" x="348" y="104">RC → drive mode</text>
+          <text class="dim" x="348" y="122">Ackermann + differential</text>
+          <text class="dim" x="348" y="140">Dynamixel2Arduino</text>
+
+          <rect class="box" x="548" y="22" width="124" height="60" rx="8" />
+          <text x="560" y="47">4 steering</text>
+          <text class="dim" x="560" y="66">position mode</text>
+
+          <rect class="box" x="548" y="118" width="124" height="60" rx="8" />
+          <text x="560" y="143">6 drive</text>
+          <text class="dim" x="560" y="162">velocity mode</text>
+
+          <line class="ln" x1="136" y1="100" x2="174" y2="100" marker-end="url(#a1)" />
+          <text class="dim" x="140" y="90">radio</text>
+          <line class="ln" x1="294" y1="100" x2="334" y2="100" marker-end="url(#a1)" />
+          <text class="dim" x="298" y="90">1 wire</text>
+          <path class="ln" d="M504 80H526V52H546" marker-end="url(#a1)" />
+          <path class="ln" d="M504 120H526V148H546" marker-end="url(#a1)" />
+          <text class="dim" x="506" y="196">TTL bus, 57600 bd</text>
+        </svg>
+        <figcaption>Phase 1 signal path. All 10 servos sit on daisy-chained TTL buses, one per side of the rover.</figcaption>
+      </figure>
+
+      <ul>
+        <li><strong>Two servo modes.</strong> The 4 steering servos run in position mode with the range limited to 135 - 225° (180° is straight ahead). The 6 drive servos run in velocity mode, so the code can command wheel rpm directly with no PWM mapping.</li>
+        <li><strong>Why not multi-turn mode for steering.</strong> A Dynamixel can make a full rotation to re-home after a mode change or power reset. On a steering joint, that would tear out the wiring. Using single-turn position mode with hard limits rules this out.</li>
+        <li><strong>Setting PID gains for smooth motion.</strong> As an inital step, I tested PID gains and motion profiles in Dynamixel Wizard 2.0. The startup code then sets a profile velocity on the steering servos and a profile acceleration on the drive servos, so the servos ramp to each new goal instead of jumping.</li>
+        <li><strong>One wire for 8 channels.</strong> PWM output would need one wire and one interrupt pin per channel. The receiver's PPM output carries all channels on a single wire, decoded by one interrupt.</li>
+        <li><strong>Failsafe on signal loss.</strong> The transmitter failsafe sets the throttle channel to its centre value (1500 µs), and the control loop treats this as stop.</li>
+        <li><strong>Drive modes.</strong> A 1485 - 1515 µs dead band on each RC lever selects between forward, reverse, Ackermann turns forward and reverse, steering on the spot, and spin in place. For spinning, a switch sets the corner wheels tangent to a circle and runs all six wheels in the same direction.</li>
+      </ul>
+
+      <h3>The PPM decoder</h3>
+      <p>
+        The interrupt timestamps every pulse with <code>micros()</code>. The gap between two pulses is one channel value, about 1000–2000 µs.
+        A gap longer than 3000 µs can only be the sync pause, so the decoder restarts at channel 1.
+      </p>
+<pre class="code"><span class="c">// Stores the pulse position timers</span>
+void my_ISR() {
+    byte state_now = digitalRead(my_pin);
+    if (state_now == my_state) {
+        timers[pulse] = micros();
+        if (pulse > 0) {
+            getChannelValue(pulse);
+        } else pulse++;
+    }
+}
+
+<span class="c">// Calculates the channel values</span>
+void getChannelValue(byte pointer) {
+    channels[pointer -1] = timers[pointer] - timers[pointer -1];
+    if (channels[pointer -1] > 3000) {        <span class="c">// sync gap: new frame</span>
+        timers[0] = timers[pointer];
+        pulse = 1;
+    } else pulse++;
+}</pre>
+      <p class="code-src">From <code>PPM.cpp</code>, a small library I wrote as a <code>.hpp</code>/<code>.cpp</code> pair.</p>
+
+      <h3>RC to wheel angle</h3>
+      <p>The three formulas above, as they run on the board. The RC output is mapped to 0–30° of virtual steering, and the result maps onto the servo's absolute angle.</p>
+<pre class="code">VirtualSteeringAngle = map(CH_2,1485,1000,0,30);
+degreeToRad = VirtualSteeringAngle*(3.14/180);
+CoR = 0.2/tan(degreeToRad);                          <span class="c">// instantaneous centre</span>
+
+InnerAngle = (atan(0.2/(CoR-(0.3085/2))))*(180/3.14);
+OuterAngle = (atan(0.2/(CoR+(0.3085/2))))*(180/3.14);
+
+<span class="c">// Mapping angle to abs angle of servos (front and rear steer opposite ways)</span>
+ServoAngleInnerFront = map(InnerAngle,0,45,180,135);
+ServoAngleOuterFront = map(OuterAngle,0,45,180,135);
+ServoAngleInnerRear  = map(InnerAngle,0,45,180,225);
+ServoAngleOuterRear  = map(OuterAngle,0,45,180,225);
+
+dxl.setGoalPosition(1,ServoAngleInnerFront,UNIT_DEGREE);
+dxl.setGoalPosition(3,ServoAngleInnerRear,UNIT_DEGREE);
+dxl.setGoalPosition(4,ServoAngleOuterRear,UNIT_DEGREE);
+dxl.setGoalPosition(2,ServoAngleOuterFront,UNIT_DEGREE);</pre>
+      <p class="code-src">From <code>LeftTurn()</code> in <code>Rover.ino</code>. <code>RightTurn()</code> mirrors it.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Phase 2: the same control in ROS 2</h2>
+    </div>
+    <div class="prose">
+      <p>
+        In phase 2 the rover gets an onboard computer (Jetson AGX Xavier) and depth cameras, and the control moves into ROS 2.
+        The key change is the input. Instead of a RC angle, the controller accepts a standard
+        <code>geometry_msgs/Twist</code> (forward speed v, turn rate ω). A Nav2 navigation stack sends the same message, so
+        the controller is ready for autonomous driving later.
+      </p>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 700 400" role="img" aria-label="ROS 2 node graph. Teleop publishes cmd_vel to the Ackermann controller. The controller publishes wheel speeds and steering angles on ang_vel to a micro-ROS node on the OpenCR, which drives the Dynamixels and publishes encoder ticks back to the odometry node. The odometry node publishes odom, TF and joint states for RViz. Separately, the RealSense point cloud goes through pointcloud_to_laserscan to SLAM Toolbox.">
+          <defs>
+            <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path class="arrowhead" d="M0 0L10 5L0 10z" />
+            </marker>
+          </defs>
+
+          <!-- row 1: command path -->
+          <rect class="box" x="8" y="20" width="150" height="60" rx="8" />
+          <text x="20" y="44">Teleop</text>
+          <text class="dim" x="20" y="63">keyboard or Xbox pad</text>
+
+          <rect class="box hl" x="250" y="20" width="160" height="60" rx="8" />
+          <text x="262" y="44">ackermann_controller</text>
+          <text class="dim" x="262" y="63">Python node</text>
+
+          <rect class="box hl" x="510" y="20" width="182" height="60" rx="8" />
+          <text x="522" y="44">micro-ROS node</text>
+          <text class="dim" x="522" y="63">Arduino on OpenCR 1.0</text>
+
+          <line class="ln" x1="158" y1="50" x2="248" y2="50" marker-end="url(#a2)" />
+          <text class="mono" x="166" y="42">/cmd_vel</text>
+          <text class="dim" x="172" y="68">Twist</text>
+          <line class="ln" x1="410" y1="50" x2="508" y2="50" marker-end="url(#a2)" />
+          <text class="mono" x="430" y="42">/ang_vel</text>
+          <text class="dim" x="420" y="68">speeds, angles</text>
+
+          <!-- servos -->
+          <rect class="box" x="510" y="140" width="182" height="54" rx="8" />
+          <text x="522" y="163">10 × Dynamixel XL430</text>
+          <text class="dim" x="522" y="181">rpm and degree goals</text>
+          <path class="ln" d="M640 80V138" marker-end="url(#a2)" />
+          <path class="ln" d="M670 138V80" marker-end="url(#a2)" />
+          <text class="dim" x="586" y="116">goals</text>
+          <text class="dim" x="675" y="116">ticks</text>
+
+          <!-- row 2: odometry -->
+          <rect class="box" x="250" y="140" width="160" height="54" rx="8" />
+          <text x="262" y="163">odom_node</text>
+          <text class="dim" x="262" y="181">wheel odometry</text>
+          <path class="ln" d="M530 80V112H330V138" marker-end="url(#a2)" />
+          <text class="mono" x="430" y="106">/ticks</text>
+          <path class="ln" d="M290 80V138" marker-end="url(#a2)" />
+          <text class="mono" x="284" y="116" text-anchor="end">/steering_angle</text>
+
+          <rect class="box" x="8" y="140" width="150" height="54" rx="8" />
+          <text x="20" y="163">robot_state_publisher</text>
+          <text class="dim" x="20" y="181">URDF from SolidWorks</text>
+          <line class="ln" x1="250" y1="167" x2="160" y2="167" marker-end="url(#a2)" />
+          <text class="mono" x="166" y="160">/joint_states</text>
+
+          <rect class="box" x="8" y="240" width="150" height="50" rx="8" />
+          <text x="20" y="270">RViz</text>
+          <path class="ln" d="M83 194V238" marker-end="url(#a2)" />
+          <text class="dim" x="90" y="222">TF</text>
+          <path class="ln" d="M330 194V265H160" marker-end="url(#a2)" />
+          <text class="mono" x="178" y="258">/odom0 + TF odom→base</text>
+
+          <!-- row 3: perception -->
+          <line class="dash" x1="8" y1="312" x2="692" y2="312" />
+          <text class="dim" x="8" y="330">Mapping</text>
+          <rect class="box" x="8" y="340" width="150" height="50" rx="8" />
+          <text x="20" y="370">RealSense D435</text>
+          <rect class="box" x="230" y="340" width="200" height="50" rx="8" />
+          <text x="242" y="370">pointcloud_to_laserscan</text>
+          <rect class="box" x="510" y="340" width="182" height="50" rx="8" />
+          <text x="522" y="362">SLAM Toolbox</text>
+          <text class="dim" x="522" y="379">2D occupancy map</text>
+          <line class="ln" x1="158" y1="365" x2="228" y2="365" marker-end="url(#a2)" />
+          <text class="dim" x="162" y="357">PointCloud2</text>
+          <line class="ln" x1="430" y1="365" x2="508" y2="365" marker-end="url(#a2)" />
+          <text class="mono" x="450" y="357">/scan</text>
+        </svg>
+        <figcaption>Phase 2 node graph. The Ackermann math from phase 1 now lives in one ROS 2 node. The OpenCR only translates messages to servo commands and reports encoder ticks.</figcaption>
+      </figure>
+
+      <h3>From Twist to wheel commands</h3>
+      <div class="formula">
+        R = v / ω&nbsp;&nbsp;&nbsp;&nbsp;(clipped to 0.4 m … 11 m; larger R is treated as straight)<br />
+        then the same δ_in, δ_out and wheel speeds as in phase 1
+      </div>
+      <ul>
+        <li><strong>Better corner wheel speeds.</strong> The Arduino version gave all wheels on one side the same speed. The ROS node uses each wheel's real distance from the ICR. Corner wheels sit further out than middle wheels, so they get <code>ω · √((R ± T)² + L²)</code>.</li>
+        <li><strong>Speed capped in tight turns.</strong> In a turn the outer wheels must run faster than the rover centre. The node lowers the centre speed so the outer wheels never exceed what the servo can deliver.</li>
+        <li><strong>Units at the boundary.</strong> The node publishes wheel speeds in rad/s and steering angles in radians. The micro-ROS sketch converts them for the servos (× 9.55 for rpm, × 57.3 for degrees).</li>
+      </ul>
+<pre class="code">theta_front_closest  = math.atan2(self.wheel_base, abs(radius) - (self.wheel_track/2))
+theta_front_farthest = math.atan2(self.wheel_base, abs(radius) + (self.wheel_track/2))
+
+vel_middle_closest  = (radius - (self.wheel_track/2)) * angular_velocity_center
+vel_corner_closest  = math.hypot(radius - (self.wheel_track/2), self.wheel_base) * angular_velocity_center
+vel_corner_farthest = math.hypot(radius + (self.wheel_track/2), self.wheel_base) * angular_velocity_center
+vel_middle_farthest = (radius + (self.wheel_track/2)) * angular_velocity_center</pre>
+      <p class="code-src">
+        From <code>control_logic.py</code>. The structure follows NASA JPL's Open Source Rover kinematics code,
+        adapted to this rover's dimensions, servos and ROS 2.
+      </p>
+
+      <h3>Wheel odometry</h3>
+      <p>
+        The OpenCR reads the encoder position of the two middle wheels and publishes the raw ticks every 100 ms.
+        The odometry node turns tick differences into wheel speeds and then into rover motion. This is the
+        standard differential-drive model, which fits because the middle wheels never steer.
+      </p>
+      <div class="formula">
+        v_L, v_R = (Δticks * 2π / 4096) / Δt * r<br />
+        v = (v_R + v_L) / 2&nbsp;&nbsp;&nbsp;&nbsp;ω = (v_R - v_L) / track<br />
+        x += v·cos θ·Δt&nbsp;&nbsp;&nbsp;&nbsp;y += v·sin θ·Δt&nbsp;&nbsp;&nbsp;&nbsp;θ += ω·Δt
+      </div>
+      <p>
+        The node publishes the pose as <code>nav_msgs/Odometry</code> and as the TF <code>odom → base_footprint</code>.
+        It also publishes <code>joint_states</code> for the wheels and steering joints, so the URDF model in RViz moves like the rover.
+      </p>
+
+      <h3>Rest of the stack</h3>
+      <ul>
+        <li><strong>URDF</strong> exported from the SolidWorks assembly with the sw_urdf exporter. I added <code>base_footprint</code>, camera and T265 links by hand.</li>
+        <li><strong>Teleop</strong> with a keyboard node or an Xbox controller through <code>joy</code>. A mapping node constrains the axes to the rover's speed limits.</li>
+        <li><strong>2D mapping.</strong> The D435 point cloud goes through <code>pointcloud_to_laserscan</code>, and SLAM Toolbox builds an occupancy map from the scan and the wheel odometry.</li>
+        <li><strong>Networking.</strong> The Jetson and the laptop share a <code>ROS_DOMAIN_ID</code> over Wi-Fi, so RViz runs on the laptop while the nodes run on the rover.</li>
+      </ul>
+
+      <figure class="diagram">
+        <img src="../assets/img/mars-rover-solidworks-urdf.png" alt="SolidWorks URDF Exporter open on the rover assembly, with the link tree from base_link through the rocker links to the wheels" loading="lazy" />
+        <figcaption>Building the URDF in SolidWorks. The exporter turns the assembly into a link tree, from <code>base_link</code> through the rocker and bogie links to each wheel.</figcaption>
+      </figure>
+
+      <figure class="diagram">
+        <img src="../assets/img/mars-rover-map.png" alt="RViz showing a 2D occupancy grid map of a room built by SLAM Toolbox, with the rover model and its TF frames in the middle" loading="lazy" />
+        <figcaption>A 2D occupancy map from SLAM Toolbox in RViz, with the rover model and its TF frames at the current pose.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Topics learned</h2>
+    </div>
+    <div class="prose">
+      <ul>
+        <li><strong>Buildup of robot</strong></li>
+        <li><strong>Dynamixel servos</strong></li>
+        <li><strong>Pulse position modulation of RC</strong></li>
+        <li><strong>Ackermann kinematics</strong></li>
+        <li><strong>Linux in Jetson Xavier</strong></li>
+        <li><strong>ROS2 Foxy</strong></li>
+        <li><strong>Mapping using SLAM &amp; RTAB-map</strong></li>        
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    © <span id="year"></span> Saravanan Arumugam. Built as a static site using Claude, no framework.
+  </div>
+</footer>
+
+<script src="../assets/js/main.js"></script>
+<script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>

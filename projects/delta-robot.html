@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Delta Robot — Saravanan Arumugam</title>
+<meta name="description" content="Delta robot with SG90 servos and 3D printed parts, modelled in Onshape, with an animation of the end-effector plate moving." />
+<link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap nav">
+    <a class="name" href="../index.html">Saravanan Arumugam <span>/</span> <b class="role">Mechatronics Engineer</b></a>
+    <ul>
+      <li><a href="../index.html#about">About</a></li>
+      <li><a href="../index.html#projects">Projects</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="theme-toggle" data-theme-toggle aria-label="Toggle color theme">☀ / ☾</button>
+  </div>
+</header>
+
+<div class="wrap breadcrumb">
+  <a href="../index.html">Portfolio</a> / <a href="../index.html#projects">Projects</a> / Delta Robot
+</div>
+
+<section class="project-hero">
+  <div class="wrap">
+    <div class="eyebrow">Mechanical Design · Robotics · CAD</div>
+    <h1>Delta Robot</h1>
+    <div class="tags">
+      <span>Onshape</span>
+      <span>Parallel kinematics</span>
+      <span>3D printing</span>
+      <span>SG90 servos</span>
+    </div>
+
+    <div class="video-frame">
+      <video src="../assets/video/delta-robot.webm" poster="../assets/img/delta-robot-poster.jpg"
+             autoplay muted loop playsinline controls preload="metadata"
+             aria-label="Animation of the delta robot assembly in Onshape: three servo-driven arms move the end-effector plate">
+      </video>
+    </div>
+    <p class="viewer-note">
+      Recorded in Onshape. The parts list on the left shows the assembly structure.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Overview</h2>
+    </div>
+    <div class="prose">
+      <p>
+        A delta robot modelled in Onshape. I built the parts, combined
+        them into an assembly with mates, and animated the arms to move
+        the end-effector plate.
+      </p>
+      <ul>
+        <li>Three SG90 hobby servos on a round base, each driving one shoulder link.</li>
+        <li>Two parallel link rods per arm, six in total, with ball joints at both ends.</li>
+        <li>All six link rods connect to one end-effector plate.</li>
+        <li>All custom parts are 3D printed.</li>
+        <li>59 part instances and 27 mates in the full assembly.</li>
+      </ul>
+      <!-- Optional: purpose, workspace size. -->
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Next steps</h2>
+    </div>
+    <div class="prose">
+      <ul>
+        <li><strong>Build the robot.</strong> 3D print the custom parts and assemble the physical robot.</li>
+        <li><strong>Parallel kinematics.</strong> Work through the inverse and forward kinematics of the delta structure, from end-effector position to the three servo angles and back.</li>
+        <li><strong>Controller.</strong> Write the controller that turns a target end-effector position into servo commands.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    © <span id="year"></span> Saravanan Arumugam. Built as a static site, no framework.
+  </div>
+</footer>
+
+<script src="../assets/js/main.js"></script>
+<script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>

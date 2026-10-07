@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FOC NEMA17 Stepper Motor Driver — Saravanan Arumugam</title>
+<meta name="description" content="Custom STM32F103 stepper motor driver board with DRV8844 H-bridge, magnetic encoder feedback, and CAN bus interface. Browse the live KiCad schematic and PCB." />
+<link rel="stylesheet" href="../assets/css/style.css" />
+<script type="module" src="https://kicanvas.org/kicanvas/kicanvas.js"></script>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap nav">
+    <a class="name" href="../index.html">Saravanan Arumugam <span>/</span> <b class="role">Mechatronics Engineer</b></a>
+    <ul>
+      <li><a href="../index.html#about">About</a></li>
+      <li><a href="../index.html#projects">Projects</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="theme-toggle" data-theme-toggle aria-label="Toggle color theme">☀ / ☾</button>
+  </div>
+</header>
+
+<div class="wrap breadcrumb">
+  <a href="../index.html">Portfolio</a> / <a href="../index.html#projects">Projects</a> / NEMA17 Stepper Driver
+</div>
+
+<section class="project-hero">
+  <div class="wrap">
+    <div class="eyebrow">Custom PCB · Motor Control</div>
+    <h1>FOC NEMA17 Stepper Motor Driver</h1>
+    <div class="tags">
+      <span>KiCad</span>
+      <span>STM32F103CBTx</span>
+      <span>DRV8844</span>
+      <span>FOC</span>
+      <span>CAN bus</span>
+      <span>Magnetic encoder</span>
+      <span>4-layer PCB</span>
+    </div>
+
+    <div class="gallery">
+      <img src="../assets/img/nema17-front.png" alt="Front side 3D render of the stepper driver PCB, showing the STM32 MCU, driver IC, USB-C micro connector, and boot/reset buttons" loading="lazy" />
+      <img src="../assets/img/nema17-rear.png" alt="Rear side 3D render of the stepper driver PCB, showing the CAN transceiver, current-sense amplifiers, and crystal" loading="lazy" />
+    </div>
+
+    <table class="spec-table">
+      <tr><td>Board revision</td><td>V1.0</td></tr>
+      <tr><td>Input</td><td>24 V, 2 A rated</td></tr>
+      <tr><td>MCU</td><td>STM32F103CBTx (Arm Cortex-M3)</td></tr>
+      <tr><td>Motor driver</td><td>TI DRV8844PWPR dual H-bridge, HTSSOP-16 PowerPAD</td></tr>
+      <tr><td>Control scheme</td><td>Field-oriented control (FOC), closed loop</td></tr>
+      <tr><td>Position feedback</td><td>External magnetic encoder, 4-pin differential header (J5)</td></tr>
+      <tr><td>Current sensing</td><td>Dual TI INA181 shunt amplifiers, one per motor phase</td></tr>
+      <tr><td>Bus interface</td><td>NXP TJA1051T-3 CAN transceiver</td></tr>
+      <tr><td>Power stage</td><td>TPS54202DDC buck converter + AMS1117 LDO for logic rails</td></tr>
+      <tr><td>Protection</td><td>PRTR5V0U2X ESD array, SMBJ26A TVS, PMEG6020AELR Schottky, resettable polyfuse</td></tr>
+      <tr><td>Programming</td><td>USB Micro-B, BOOT1 / RESET1 buttons for DFU entry</td></tr>
+      <tr><td>Layout</td><td>4-layer, mounted via 4x corner holes for direct NEMA17 fitment</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Overview</h2>
+    </div>
+    <div class="prose">
+      <p>
+        This board is a compact closed-loop driver for a NEMA17 stepper
+        motor, built for a robotic arm project. It runs field-oriented
+        control on an STM32F103, reading phase current through two INA181
+        amplifiers and rotor position from an external magnetic encoder, so
+        the motor can be commanded smoothly instead of driven open loop.
+      </p>
+      <ul>
+        <li>DRV8844 H-bridge drives both motor phases directly from the 24V rail.</li>
+        <li>Per-phase current sensing feeds the FOC control loop running on the STM32.</li>
+        <li>CAN transceiver lets the board sit on a shared bus with other joints in a multi-axis arm.</li>
+        <li>On-board buck and LDO regulators generate the 5V and 3.3V logic rails from the 24V input.</li>
+        <li>ESD and TVS protection on the CAN and USB lines for robustness outside a bench setting.</li>
+        <li>USB Micro-B plus BOOT1/RESET1 buttons for firmware flashing without a separate programmer.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Schematic &amp; PCB</h2>
+    </div>
+    <p class="prose" style="margin-bottom: 16px;">
+      Live KiCad source, rendered in the browser via
+      <a href="https://kicanvas.org" target="_blank" rel="noopener">KiCanvas</a>.
+      Use the panel on the right of the viewer to switch between the
+      schematic and the PCB layout, pan and zoom, and inspect individual
+      nets and footprints.
+    </p>
+    <div class="viewer-frame">
+      <kicanvas-embed controls="full" theme="kicad">
+        <kicanvas-source src="../assets/kicad/Nema_17_stepper_driver.kicad_sch"></kicanvas-source>
+        <kicanvas-source src="../assets/kicad/Nema_17_stepper_driver.kicad_pcb"></kicanvas-source>
+      </kicanvas-embed>
+    </div>
+    <p class="viewer-note">
+      Rendered client-side from the original .kicad_sch / .kicad_pcb files, no export or screenshot.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Downloads</h2>
+    </div>
+    <div class="downloads">
+      <a class="btn" href="../downloads/nema17-schematic.pdf">📄 Schematic (PDF)</a>
+      <a class="btn" href="../downloads/nema17-ibom.html">🧾 Interactive BOM</a>
+      <a class="btn" href="../downloads/nema17-gerbers.zip">🏭 Gerbers + drill (.zip)</a>
+      <a class="btn" href="../downloads/nema17-3d-model.step">🧱 3D model (.step)</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    © <span id="year"></span> Saravanan Arumugam. Built as a static site, no framework.
+  </div>
+</footer>
+
+<script src="../assets/js/main.js"></script>
+<script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>

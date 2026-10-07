@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 200" role="img" aria-label="Signal flow: Taranis transmitter to R-XSR receiver, one PPM wire to the OpenCR board, then a TTL bus to 4 steering servos in position mode and 6 drive servos in velocity mode." width="680" height="200">
+          <defs>
+            <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="#4b5563" />
+            </marker>
+          </defs>
+          <rect x="0.0" y="0.0" width="680.0" height="200.0" fill="#ffffff" /><rect x="8" y="70" width="128" height="60" rx="8" fill="#f0f2f5" stroke="#dde1e7" stroke-width="1.5" />
+          <text x="20" y="96" fill="#1a1d23" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">Taranis X9 Lite</text>
+          <text x="20" y="114" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">RC transmitter</text>
+
+          <rect x="176" y="70" width="118" height="60" rx="8" fill="#f0f2f5" stroke="#dde1e7" stroke-width="1.5" />
+          <text x="188" y="96" fill="#1a1d23" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">R-XSR receiver</text>
+          <text x="188" y="114" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">CPPM output</text>
+
+          <rect x="336" y="40" width="168" height="120" rx="8" fill="#f0f2f5" stroke="#0f9d80" stroke-width="1.5" />
+          <text x="348" y="64" fill="#1a1d23" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">OpenCR 1.0</text>
+          <text x="348" y="86" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">PPM interrupt reader</text>
+          <text x="348" y="104" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">stick → drive mode</text>
+          <text x="348" y="122" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">Ackermann + differential</text>
+          <text x="348" y="140" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">Dynamixel2Arduino</text>
+
+          <rect x="548" y="22" width="124" height="60" rx="8" fill="#f0f2f5" stroke="#dde1e7" stroke-width="1.5" />
+          <text x="560" y="47" fill="#1a1d23" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">4 steering</text>
+          <text x="560" y="66" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">position mode</text>
+
+          <rect x="548" y="118" width="124" height="60" rx="8" fill="#f0f2f5" stroke="#dde1e7" stroke-width="1.5" />
+          <text x="560" y="143" fill="#1a1d23" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">6 drive</text>
+          <text x="560" y="162" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">velocity mode</text>
+
+          <line x1="136" y1="100" x2="174" y2="100" marker-end="url(#a1)" stroke="#4b5563" stroke-width="1.5" fill="none" />
+          <text x="140" y="90" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">radio</text>
+          <line x1="294" y1="100" x2="334" y2="100" marker-end="url(#a1)" stroke="#4b5563" stroke-width="1.5" fill="none" />
+          <text x="298" y="90" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">1 wire</text>
+          <path d="M504 80H526V52H546" marker-end="url(#a1)" stroke="#4b5563" stroke-width="1.5" fill="none" />
+          <path d="M504 120H526V148H546" marker-end="url(#a1)" stroke="#4b5563" stroke-width="1.5" fill="none" />
+          <text x="506" y="196" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">TTL bus, 57600 bd</text>
+        </svg>

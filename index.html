@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Saravanan Arumugam — Mechatronics design portfolio</title>
+<meta name="description" content="Portfolio of Saravanan Arumugam — hardware and mechanical design projects, PCB design, 3D CAD, and firmware." />
+<link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap nav">
+    <div class="name">Saravanan Arumugam <span>/</span> <b class="role">Mechatronics Engineer</b></div>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="theme-toggle" data-theme-toggle aria-label="Toggle color theme">☀ / ☾</button>
+  </div>
+</header>
+
+<section id="about">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>About</h2>
+      <span class="num">01</span>
+    </div>
+    <div class="about-grid">
+      <p>
+        I am a Mechatronics Engineer working in electronics development,
+        with a passion for robotics, embedded systems, and product development.
+        My experience includes electronics design, prototyping, system testing,
+        and the development of test setups. I enjoy understanding how systems work,
+        solving technical challenges, and turning ideas into practical solutions.
+        I am always interested in learning new technologies and improving my engineering
+        skills through hands-on projects.
+      </p>
+ 
+      <div class="skills">
+        <span>KiCad</span>
+        <span>Onshape</span>
+        <span>SolidWorks</span>
+        <span>Embedded firmware</span>
+        <span>C / C++</span>
+        <span>Python</span>
+        <span> Matlab/Simulink-MBD</span>
+        <span>ROS 2</span>
+        <span>Linux</span>
+        <span>Motor control</span>
+       </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Projects</h2>
+      <span class="num">02</span>
+    </div>
+    <div class="projects-grid">
+
+      <a class="card" href="projects/so101-robot-arm.html">
+        <div class="thumb">
+          <video src="assets/video/so101-moveit.webm" poster="assets/img/so101-moveit-poster.jpg"
+                 autoplay muted loop playsinline preload="metadata" style="transform: scale(2); transform-origin: 85% 45%;"
+                 aria-label="RViz recording of MoveIt 2 planning and executing a motion of the SO-101 robot arm"></video>
+        </div>
+        <div class="body">
+          <h3>SO-101 Robot Arm with ROS 2 and MoveIt 2</h3>
+          <p>
+            Custom ros2_control hardware plugin for six Feetech bus servos,
+            so a motion planned in MoveIt 2 drives the real arm. Includes
+            joint calibration and a real/mock launch setup.
+          </p>
+          <div class="tags">
+            <span>ROS 2</span>
+            <span>MoveIt 2</span>
+            <span>ros2_control</span>
+            <span>C++</span>
+          </div>
+          <div class="link-row">View project →</div>
+        </div>
+      </a>
+
+      <a class="card" href="projects/mars-rover.html">
+        <div class="thumb">
+          <video src="assets/video/mars-rover-rviz.webm" poster="assets/img/mars-rover-rviz-poster.jpg"
+                 autoplay muted loop playsinline preload="metadata" style="transform: scale(2.6); transform-origin: 64% 46%;"
+                 aria-label="RViz recording of the six-wheel rover model driving under teleop commands"></video>
+        </div>
+        <div class="body">
+          <h3>Six-Wheel Mars Rover, from Arduino to ROS 2</h3>
+          <p>
+            Rocker-bogie rover with 10 Dynamixel servos. Ackermann steering
+            and RC control on an OpenCR board first, then a ROS 2 controller
+            with micro-ROS, wheel odometry and 2D mapping.
+          </p>
+          <div class="tags">
+            <span>ROS 2</span>
+            <span>Arduino C++</span>
+            <span>micro-ROS</span>
+            <span>Python</span>
+          </div>
+          <div class="link-row">View project →</div>
+        </div>
+      </a>
+
+      <a class="card" href="projects/vacuum-robot-simscape.html">
+        <div class="thumb">
+          <video src="assets/video/vacuum-robot-obstacle-climb.webm" poster="assets/img/vacuum-robot-obstacle-poster.jpg"
+                 autoplay muted loop playsinline preload="metadata" style="object-position: 35% 50%;"
+                 aria-label="Simscape simulation of a vacuum cleaner robot model climbing over a step obstacle"></video>
+        </div>
+        <div class="body">
+          <h3>Vacuum Robot Model in Simscape (Master's Thesis)</h3>
+          <p>
+            Parameterized multibody model of a differential-drive vacuum
+            robot with contact and friction modelling. It matches the real
+            robot's 19 mm obstacle limit and follows waypoints via Stateflow.
+          </p>
+          <div class="tags">
+            <span>Simscape Multibody</span>
+            <span>Simulink</span>
+            <span>Stateflow</span>
+            <span>MATLAB</span>
+          </div>
+          <div class="link-row">View project →</div>
+        </div>
+      </a>
+
+      <a class="card" href="projects/nema17-stepper-driver.html">
+        <div class="thumb">
+          <img src="assets/img/nema17-front.png" alt="NEMA17 FOC stepper motor driver PCB, front side render" loading="lazy" />
+        </div>
+        <div class="body">
+          <h3>FOC NEMA17 Stepper Motor Driver</h3>
+          <p>
+            Custom four-layer driver board with STM32F103 control, DRV8844
+            H-bridge, magnetic encoder feedback, and CAN bus interface.
+            Browse the live schematic and PCB below.
+          </p>
+          <div class="tags">
+            <span>KiCad</span>
+            <span>STM32F103</span>
+            <span>FOC</span>
+            <span>CAN bus</span>
+          </div>
+          <div class="link-row">View project →</div>
+        </div>
+      </a>
+
+      <a class="card" href="projects/inverted-pendulum.html">
+        <div class="thumb">
+          <video src="assets/video/furuta-pendulum-simscape.webm"
+                 autoplay muted loop playsinline preload="metadata" style="object-fit: contain;"
+                 aria-label="Simscape Mechanics Explorer animation of the Furuta pendulum model"></video>
+        </div>
+        <div class="body">
+          <h3>Furuta Pendulum</h3>
+          <p>
+            Furuta (rotary inverted) pendulum, modelled in Onshape and Simscape
+            Multibody and built on hardware. A NEMA17 stepper on an STM32 Nucleo
+            with an IHM01A1 driver turns the arm, and an AS5600 encoder reads the pendulum angle.
+          </p>
+          <div class="tags">
+            <span>Simscape Multibody</span>
+            <span>STM32</span>
+            <span>Onshape</span>
+            <span>AS5600</span>
+          </div>
+          <div class="link-row">View project →</div>
+        </div>
+      </a>
+
+      <a class="card" href="projects/two-wheel-robot.html">
+        <div class="thumb">
+          <video src="assets/video/two-wheel-robot-balancing.webm"
+                 autoplay muted loop playsinline preload="metadata" style="object-fit: contain;"
+                 aria-label="The two-wheel robot balancing upright on its wheels"></video>
+        </div>
+        <div class="body">
+          <h3>Two-Wheel Balancing Robot</h3>
+          <p>
+            Self-balancing robot. An ESP32 reads the tilt from a
+            BMI160 IMU and drives two DC motors through a TB6612FNG H-bridge,
+            powered from a 7.6 V LiPo via an LM2596 buck converter.
+          </p>
+          <div class="tags">
+            <span>ESP32</span>
+            <span>TB6612FNG</span>
+            <span>BMI160</span>
+            <span>Motor control</span>
+          </div>
+          <div class="link-row">View project →</div>
+        </div>
+      </a>
+
+      <a class="card" href="projects/delta-robot.html">
+        <div class="thumb">
+          <video src="assets/video/delta-robot.webm" poster="assets/img/delta-robot-poster.jpg"
+                 autoplay muted loop playsinline preload="metadata" style="object-position: 70% 60%;"
+                 aria-label="Animated Onshape model of a servo-driven delta robot"></video>
+        </div>
+        <div class="body">
+          <h3>Delta Robot</h3>
+          <p>
+            Delta robot with SG90 servos and 3D printed parts, modelled in
+            Onshape, with an animation of the three arms moving the plate.
+          </p>
+          <div class="tags">
+            <span>Onshape</span>
+            <span>3D CAD</span>
+            <span>Robotics</span>
+            <span>3D printing</span>
+          </div>
+          <div class="link-row">View project →</div>
+        </div>
+      </a>
+
+      <a class="card" href="projects/cylinder-assembly.html">
+        <div class="thumb">
+          <video src="assets/video/cylinder-stroke.webm" poster="assets/img/cylinder-poster.jpg"
+                 autoplay muted loop playsinline preload="metadata"
+                 aria-label="Animated CAD model of a cylinder assembly with the piston and rod stroking"></video>
+        </div>
+        <div class="body">
+          <h3>Cylinder Assembly</h3>
+          <p>
+            Flange-mounted cylinder assembly modelled in Onshape, with an
+            animated piston and rod stroke shown through a transparent barrel.
+          </p>
+          <div class="tags">
+            <span>Onshape</span>
+        <span>SolidWorks</span>
+            <span>3D CAD</span>
+            <span>Assembly</span>
+          </div>
+          <div class="link-row">View project →</div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Contact</h2>
+      <span class="num">03</span>
+    </div>
+    <p style="color: var(--text-dim); max-width: 560px;">
+      Open to conversations about embedded systems, hardware design, and
+      robotics. Reach out directly or find me on LinkedIn / GitHub.
+    </p>
+    <div class="contact-links">
+      <a href="mailto:saravanan.a325@gmail.com">✉ saravanan.a325@gmail.com</a>
+      <a href="https://www.linkedin.com/in/saravanan-arumugam-2b49b4135" target="_blank" rel="noopener">🔗 LinkedIn</a>
+      <a href="https://github.com/Sarwan1494" target="_blank" rel="noopener">💻 GitHub</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    © <span id="year"></span> Saravanan Arumugam. Built as a static site with Claude, no framework.
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+<script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>

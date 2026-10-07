@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 400" role="img" aria-label="ROS 2 node graph. Teleop publishes cmd_vel to the Ackermann controller. The controller publishes wheel speeds and steering angles on ang_vel to a micro-ROS node on the OpenCR, which drives the Dynamixels and publishes encoder ticks back to the odometry node. The odometry node publishes odom, TF and joint states for RViz. Separately, the RealSense point cloud goes through pointcloud_to_laserscan to SLAM Toolbox." width="700" height="400">
+          <defs>
+            <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="#4b5563" />
+            </marker>
+          </defs>
+
+          
+          <rect x="0.0" y="0.0" width="700.0" height="400.0" fill="#ffffff" /><rect x="8" y="20" width="150" height="60" rx="8" fill="#f0f2f5" stroke="#dde1e7" stroke-width="1.5" />
+          <text x="20" y="44" fill="#1a1d23" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">Teleop</text>
+          <text x="20" y="63" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">keyboard or Xbox pad</text>
+
+          <rect x="250" y="20" width="160" height="60" rx="8" fill="#f0f2f5" stroke="#0f9d80" stroke-width="1.5" />
+          <text x="262" y="44" fill="#1a1d23" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">ackermann_controller</text>
+          <text x="262" y="63" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">Python node</text>
+
+          <rect x="510" y="20" width="182" height="60" rx="8" fill="#f0f2f5" stroke="#0f9d80" stroke-width="1.5" />
+          <text x="522" y="44" fill="#1a1d23" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">micro-ROS node</text>
+          <text x="522" y="63" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">Arduino on OpenCR 1.0</text>
+
+          <line x1="158" y1="50" x2="248" y2="50" marker-end="url(#a2)" stroke="#4b5563" stroke-width="1.5" fill="none" />
+          <text x="166" y="42" fill="#0f9d80" font-family="Consolas, Menlo, DejaVu Sans Mono, monospace" font-size="11.5">/cmd_vel</text>
+          <text x="172" y="68" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">Twist</text>
+          <line x1="410" y1="50" x2="508" y2="50" marker-end="url(#a2)" stroke="#4b5563" stroke-width="1.5" fill="none" />
+          <text x="430" y="42" fill="#0f9d80" font-family="Consolas, Menlo, DejaVu Sans Mono, monospace" font-size="11.5">/ang_vel</text>
+          <text x="420" y="68" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">speeds, angles</text>
+
+          
+          <rect x="510" y="140" width="182" height="54" rx="8" fill="#f0f2f5" stroke="#dde1e7" stroke-width="1.5" />
+          <text x="522" y="163" fill="#1a1d23" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">10 × Dynamixel XL430</text>
+          <text x="522" y="181" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">rpm and degree goals</text>
+          <path d="M640 80V138" marker-end="url(#a2)" stroke="#4b5563" stroke-width="1.5" fill="none" />
+          <path d="M670 138V80" marker-end="url(#a2)" stroke="#4b5563" stroke-width="1.5" fill="none" />
+          <text x="586" y="116" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">goals</text>
+          <text x="675" y="116" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">ticks</text>
+
+          
+          <rect x="250" y="140" width="160" height="54" rx="8" fill="#f0f2f5" stroke="#dde1e7" stroke-width="1.5" />
+          <text x="262" y="163" fill="#1a1d23" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">odom_node</text>
+          <text x="262" y="181" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">wheel odometry</text>
+          <path d="M530 80V112H330V138" marker-end="url(#a2)" stroke="#4b5563" stroke-width="1.5" fill="none" />
+          <text x="430" y="106" fill="#0f9d80" font-family="Consolas, Menlo, DejaVu Sans Mono, monospace" font-size="11.5">/ticks</text>
+          <path d="M290 80V138" marker-end="url(#a2)" stroke="#4b5563" stroke-width="1.5" fill="none" />
+          <text x="284" y="116" text-anchor="end" fill="#0f9d80" font-family="Consolas, Menlo, DejaVu Sans Mono, monospace" font-size="11.5">/steering_angle</text>
+
+          <rect x="8" y="140" width="150" height="54" rx="8" fill="#f0f2f5" stroke="#dde1e7" stroke-width="1.5" />
+          <text x="20" y="163" fill="#1a1d23" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">robot_state_publisher</text>
+          <text x="20" y="181" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">URDF from SolidWorks</text>
+          <line x1="250" y1="167" x2="160" y2="167" marker-end="url(#a2)" stroke="#4b5563" stroke-width="1.5" fill="none" />
+          <text x="166" y="160" fill="#0f9d80" font-family="Consolas, Menlo, DejaVu Sans Mono, monospace" font-size="11.5">/joint_states</text>
+
+          <rect x="8" y="240" width="150" height="50" rx="8" fill="#f0f2f5" stroke="#dde1e7" stroke-width="1.5" />
+          <text x="20" y="270" fill="#1a1d23" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">RViz</text>
+          <path d="M83 194V238" marker-end="url(#a2)" stroke="#4b5563" stroke-width="1.5" fill="none" />
+          <text x="90" y="222" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">TF</text>
+          <path d="M330 194V265H160" marker-end="url(#a2)" stroke="#4b5563" stroke-width="1.5" fill="none" />
+          <text x="178" y="258" fill="#0f9d80" font-family="Consolas, Menlo, DejaVu Sans Mono, monospace" font-size="11.5">/odom0 + TF odom→base</text>
+
+          
+          <line x1="8" y1="312" x2="692" y2="312" stroke="#8a94a3" stroke-width="1" stroke-dasharray="4 4" fill="none" />
+          <text x="8" y="330" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">Mapping</text>
+          <rect x="8" y="340" width="150" height="50" rx="8" fill="#f0f2f5" stroke="#dde1e7" stroke-width="1.5" />
+          <text x="20" y="370" fill="#1a1d23" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">RealSense D435</text>
+          <rect x="230" y="340" width="200" height="50" rx="8" fill="#f0f2f5" stroke="#dde1e7" stroke-width="1.5" />
+          <text x="242" y="370" fill="#1a1d23" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">pointcloud_to_laserscan</text>
+          <rect x="510" y="340" width="182" height="50" rx="8" fill="#f0f2f5" stroke="#dde1e7" stroke-width="1.5" />
+          <text x="522" y="362" fill="#1a1d23" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">SLAM Toolbox</text>
+          <text x="522" y="379" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">2D occupancy map</text>
+          <line x1="158" y1="365" x2="228" y2="365" marker-end="url(#a2)" stroke="#4b5563" stroke-width="1.5" fill="none" />
+          <text x="162" y="357" fill="#4b5563" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="11.5">PointCloud2</text>
+          <line x1="430" y1="365" x2="508" y2="365" marker-end="url(#a2)" stroke="#4b5563" stroke-width="1.5" fill="none" />
+          <text x="450" y="357" fill="#0f9d80" font-family="Consolas, Menlo, DejaVu Sans Mono, monospace" font-size="11.5">/scan</text>
+        </svg>

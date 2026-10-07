@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Furuta Pendulum — Saravanan Arumugam</title>
+<meta name="description" content="Furuta pendulum (rotary inverted pendulum) modelled in Onshape, with a NEMA17 stepper motor driving the arm and an AS5600 magnetic encoder reading the pendulum angle." />
+<link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap nav">
+    <a class="name" href="../index.html">Saravanan Arumugam <span>/</span> <b class="role">Mechatronics Engineer</b></a>
+    <ul>
+      <li><a href="../index.html#about">About</a></li>
+      <li><a href="../index.html#projects">Projects</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="theme-toggle" data-theme-toggle aria-label="Toggle color theme">☀ / ☾</button>
+  </div>
+</header>
+
+<div class="wrap breadcrumb">
+  <a href="../index.html">Portfolio</a> / <a href="../index.html#projects">Projects</a> / Furuta Pendulum
+</div>
+
+<section class="project-hero">
+  <div class="wrap">
+    <div class="eyebrow">Mechanical Design · Control Systems · CAD</div>
+    <h1>Furuta Pendulum</h1>
+    <div class="tags">
+      <span>Onshape</span>
+      <span>3D CAD</span>
+      <span>Furuta pendulum</span>
+      <span>Assembly</span>
+      <span>Mates</span>
+      <span>NEMA17 stepper</span>
+      <span>AS5600 encoder</span>
+      <span>Animation</span>
+      <span>Simscape Multibody</span>
+      <span>STM32 Nucleo-F446RE</span>
+      <span>X-NUCLEO-IHM01A1</span>
+      <span>STM32CubeIDE</span>
+    </div>
+
+    <div class="video-frame narrow">
+      <video src="../assets/video/furuta-pendulum-simscape.webm"
+             autoplay muted loop playsinline controls preload="metadata"
+             aria-label="Simscape Mechanics Explorer animation of the Furuta pendulum model">
+      </video>
+    </div>
+    <p class="viewer-note">The pendulum model in the Simscape Mechanics Explorer.</p>
+
+    <table class="spec-table">
+      <tr><td>Controller board</td><td>STM32 Nucleo-F446RE</td></tr>
+      <tr><td>Motor driver</td><td>X-NUCLEO-IHM01A1 stepper driver expansion board</td></tr>
+      <tr><td>Motor</td><td>17HE12-1204S NEMA17 stepper</td></tr>
+      <tr><td>Sensor</td><td>AS5600 magnetic encoder</td></tr>
+      <tr><td>Development</td><td>STM32CubeIDE</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Overview</h2>
+    </div>
+    <div class="prose">
+      <p>
+        A Furuta pendulum, also called a rotary inverted pendulum, modelled
+        in Onshape. I built the parts,
+        combined them into an assembly with mates, and animated the motion.
+      </p>
+      <ul>
+        <li>A stand holds a 17HE12-1204S NEMA17 stepper motor, which turns the encoder mount.</li>
+        <li>The pendulum is a bent arm that pivots in the encoder mount and carries a mass at its tip.</li>
+        <li>An AS5600 magnetic encoder on the encoder mount reads the pendulum angle.</li>
+        <li>8 part instances and 8 mates in the full assembly.</li>
+      </ul>
+      <!-- Optional: controller, firmware, build photos. -->
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Simscape Multibody model</h2>
+    </div>
+    <div class="prose">
+      <figure class="diagram">
+        <img src="../assets/img/furuta-pendulum-multibody.png" alt="Simscape Multibody diagram of the pendulum: world frame and solver configuration, the stand, a torque-driven revolute joint for the base, the pendulum mount, a second revolute joint for the pendulum and a tip mass. A Motor_input port drives the base joint, and the pendulum angle and velocity and base angle and velocity are outputs." loading="lazy" />
+        <figcaption>The multibody model. A motor torque drives the base joint, and the model outputs the pendulum and base angles and velocities.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Hardware</h2>
+    </div>
+    <div class="video-frame narrow">
+      <video src="../assets/video/furuta-pendulum-hardware.webm"
+             autoplay muted loop playsinline controls preload="metadata"
+             aria-label="The built Furuta pendulum running on hardware">
+      </video>
+    </div>
+    <p class="viewer-note">
+      The built pendulum on hardware.
+    </p>
+
+    <figure class="diagram">
+      <img src="../assets/img/furuta-pendulum-nucleo-pins.png" alt="STM32CubeIDE pinout view of the STM32F446RET6 in LQFP64: SPI1 on PA5, PA6 and PA7, a flag pin on PA10, GPIO outputs on PA8 and PA9, TIM3_CH2 on PC7, TIM2_CH3 on PB10, I2C1 on PB8 and PB9, USART2 on PA2 and PA3, and the blue push button on PC13" loading="lazy" />
+      <figcaption>Pin configuration of the STM32F446RE in STM32CubeIDE. SPI1 and the flag pin connect to the IHM01A1 driver, and I2C1 reads the AS5600 encoder.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    © <span id="year"></span> Saravanan Arumugam. Built as a static site, no framework.
+  </div>
+</footer>
+
+<script src="../assets/js/main.js"></script>
+<script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>
